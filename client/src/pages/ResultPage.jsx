@@ -33,6 +33,7 @@ export default function ResultPage() {
             <div className="bg-white p-8 rounded shadow-md w-full max-w-6xl h-screen">
                 <div className='flex flex-col md:flex-row justify-between items-center'>
                     <img src="logoFIN.png" alt="Logo" className="h-8 w-auto mb-4 md:hidden" />
+                    {/* query/ TITLE*/}
                     <h1 className="text-4xl font-bold mb-4">{query}</h1>
                     <img src="logoFIN.png" alt="Logo" className="h-8 w-auto max-md:hidden" />
                 </div>

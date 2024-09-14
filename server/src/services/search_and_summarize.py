@@ -59,10 +59,28 @@ def summarize_text(text):
     )
     return response.choices[0].message.content.strip()
 
+# Function to extract important words from a query using Groq
+def extract_important_words(query):
+    response = client.chat.completions.create(
+        model="llama3-8b-8192",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": f"Extract the most important words from the following query, just give me the words straight up, ONLY THE WORDS, no other text:\n\n{query}"}
+        ],
+        max_tokens=50
+    )
+    important_words = response.choices[0].message.content.strip().split(' ')
+
+    return important_words
+
 # Main function to fetch top 5 results, process them, and send to Groq
 def process_search_and_summarize(query):
     logging.basicConfig(level=logging.DEBUG)
     logging.debug(f"Processing query: {query}")
+    
+    important_words = extract_important_words(query)
+    logging.debug(f"Important words: {important_words}")
+    
     search_results = google_search(query)
     all_texts = ""
     resource_list = []
@@ -87,10 +105,13 @@ def process_search_and_summarize(query):
 
 
 if __name__ == "__main__":
-    query = "dog water"
+    query = "What is go fish hack the north?"
     summary, resources = process_search_and_summarize(query)
-    print("### Summary from Groq ###")
-    print(summary)
-    print("\n### Resources Used ###")
-    for link in resources:
-        print(link)
+    important = extract_important_words(query)
+    print("### Important Words ###")
+    print(important)
+    # print("### Summary from Groq ###")
+    # print(summary)
+    # print("\n### Resources Used ###")
+    # for link in resources:
+    #     print(link)
