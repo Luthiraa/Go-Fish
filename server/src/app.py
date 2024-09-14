@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from services.search_and_summarize import process_search_and_summarize
 import logging
-
+from services.search_and_summarize import extract_important_words
 app = Flask(__name__)
 CORS(app)
 
@@ -22,12 +22,15 @@ def search_and_summarize():
     
     try:
         summary, resources = process_search_and_summarize(query)
+        important = extract_important_words(query)
         logging.debug(f"Summary: {summary}")
+        logging.debug(f"Important: {important}")
         logging.debug(f"Resources: {resources}")
-        return jsonify({"summary": summary, "resources": resources})
+        return jsonify({"summary": summary, "resources": resources, "important": important})
     except Exception as e:
         logging.error("Error occurred: %s", str(e))
         return jsonify({"error": str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True)
