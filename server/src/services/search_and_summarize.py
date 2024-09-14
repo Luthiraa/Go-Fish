@@ -53,7 +53,7 @@ def summarize_text(text):
         model="llama3-8b-8192",
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": f"Summarize the following text and provide key takeaways:\n\n{text}"}
+            {"role": "user", "content": f"Summarize the following text and provide key takeaways. Make sure to return your answer in Markdown in HTML. Format the bullet points, paragraphs, links, bold, etc... styling with appropriate tags. Make it look super pretty, readable, and spacely formatted. Have extra links at the end too. Here is the text to summarize: \n\n{text}"}
         ],
         max_tokens=500
     )
