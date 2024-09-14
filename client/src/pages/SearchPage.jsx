@@ -35,14 +35,14 @@ export default function SearchPage() {
         setInputValue(event.target.value);
     };
 
-    const handleSearchSubmit = () => {
-        // use input value to send to backend
-    };
-
     const handleKeyPress = (event) => {
         if (event.key === 'Enter') {
             handleSearchSubmit();
         }
+    };
+
+    const handleSearchSubmit = () => {
+        window.location.href = `/result?query=${encodeURIComponent(inputValue)}`;
     };
 
     return (
