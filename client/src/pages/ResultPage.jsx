@@ -6,7 +6,8 @@ export default function ResultPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        axios.get('/api/github')
+        //! hardcoded endpoint
+        axios.get('/api/summ')
             .then(response => {
                 setEndpoint(response.data.endpoint);
                 setLoading(false);
