@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Go Fish",
+  "name": "Go Fish Search Engine",
   "icons": [
     {
       "src": "favicon.ico",
