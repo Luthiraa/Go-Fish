@@ -1,7 +1,7 @@
 import os
 import openai
 from googleapiclient.discovery import build
-import secrets
+from secrets import secrets
 
 GOOGLE_API_KEY = secrets.google_api_key
 GOOGLE_CSE_ID = secrets.google_cse_id

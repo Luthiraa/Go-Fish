@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from .services.github_search import search_code_with_gpt
-from .services.summary import summarize_search_query
+from services.github_search import search_code_with_gpt
+from services.summary import summarize_search_query
 import logging
 
 app = Flask(__name__)
