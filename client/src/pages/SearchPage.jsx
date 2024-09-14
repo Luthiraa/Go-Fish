@@ -4,11 +4,16 @@ import OutlinedInput from "@mui/material/OutlinedInput"
 import InputAdornment from '@mui/material/InputAdornment';
 import React, { useState } from 'react';
 import ArrowCircleUpRoundedIcon from '@mui/icons-material/ArrowCircleUpRounded';
+import Button from '@mui/material/Button';
 
 export default function SearchPage() {
 
     const [inputValue, setInputValue] = useState('');
+    const quickSearches = ["What is Go Fish?", "Who helped develop this?", "What is the purpose of this?"];
 
+    const handleQuickSearchClick = (searchText) => {
+        setInputValue(searchText);
+    };
     const handleInputChange = (event) => {
         setInputValue(event.target.value);
     };
@@ -65,6 +70,28 @@ export default function SearchPage() {
                         }}
                     />
                 </FormControl>
+                <div className="flex max-md:flex-wrap justify-center space-x-3 max-md:space-y-3 mt-3">
+                    {quickSearches.map((searchText, index) => (
+                    <Button 
+                        key={index} 
+                        onClick={() => handleQuickSearchClick(searchText)}
+                        sx={{
+                            borderRadius: '50px',
+                            padding: '8px 30px',
+                            backgroundColor: 'orange',
+                            color: 'black',
+                            textTransform: 'capitalize',
+                            transition: 'all 0.3s',
+                            '&:hover': {
+                                transition: 'all 0.3s',
+                                scale: 1.05,
+                            },
+                        }}
+                    >
+                        {searchText}
+                    </Button>
+                    ))}
+                </div>
             </div>
         </div>
     );
