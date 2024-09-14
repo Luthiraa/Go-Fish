@@ -1,8 +1,9 @@
 import openai
 from github import Github
+import secrets
 
 # Initialize OpenAI with your API key
-openai.api_key = "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"
+openai.api_key = secrets.openai_api
 
 def search_code_with_gpt(query, repo_name, github_token):
     """
@@ -13,17 +14,11 @@ def search_code_with_gpt(query, repo_name, github_token):
     :param github_token: Your GitHub API token for authentication.
     :return: A list of dictionaries containing the file path, code snippet, and line number.
     """
-    # Authenticate with GitHub
     g = Github(github_token)
-    
-    # Get the repository
     repo = g.get_repo(repo_name)
-    
-    # Get the contents of the repository
     contents = repo.get_contents("")
     search_results = [] 
-
-    # Helper function to recursively fetch files from the repo
+    
     def recursive_search(contents):
         for content_file in contents:
             if content_file.type == "dir":
