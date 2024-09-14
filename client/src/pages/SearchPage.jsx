@@ -6,6 +6,7 @@ import React, { useState } from 'react';
 import ArrowCircleUpRoundedIcon from '@mui/icons-material/ArrowCircleUpRounded';
 import Button from '@mui/material/Button';
 import './SearchPage.css';
+import axios from "axios";
 
 export default function SearchPage() {
 
@@ -43,6 +44,7 @@ export default function SearchPage() {
 
     const handleSearchSubmit = () => {
         window.location.href = `/result?query=${encodeURIComponent(inputValue)}`;
+        axios.post('/api/search', { query: inputValue })
     };
 
     return (
