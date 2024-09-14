@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import SailingRoundedIcon from '@mui/icons-material/SailingRounded';
 import axios from 'axios';
 
 export default function ResultPage() {
@@ -35,7 +36,10 @@ export default function ResultPage() {
                     <h1 className="text-4xl font-bold mb-4">{query}</h1>
                     <img src="logoFIN.png" alt="Logo" className="h-8 w-auto max-md:hidden" />
                 </div>
-                {loading ? <p>Loading...</p> : (
+                {loading ? <div>
+                    <SailingRoundedIcon className="animate-bounce text-blue-500 mx-auto mr-4 mt-6" sx={{ fontSize: 60 }}/>
+                    <h2 className='animate-pulse text-blue-800'>Searching for information...</h2>
+                </div> : (
                     <>
                         <p>{summary}</p>
                         <ul>
