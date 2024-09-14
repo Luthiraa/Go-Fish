@@ -61,15 +61,16 @@ def search_code_with_gpt(query, repo_name, github_token):
     return search_results
 
 # Example usage
-github_token = "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"
-repo_name = "Luthiraa/Go-Fish"
-query = "function to add two numbers"
+if __name__ == "__main__":
+    github_token = "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"
+    repo_name = "Luthiraa/Go-Fish"
+    query = "function to add two numbers"
 
-results = search_code_with_gpt(query, repo_name, github_token)
+    results = search_code_with_gpt(query, repo_name, github_token)
 
-# Print the results
-for result in results:
-    print(f"Found in {result['file_path']} at line {result['line_number']}:")
-    print(f"Code: {result['code_snippet']}")
-    print(f"GPT-3.5 Relevance: {result['gpt_response']}")
-    print("-" * 40)
+    # Print the results
+    for result in results:
+        print(f"Found in {result['file_path']} at line {result['line_number']}:")
+        print(f"Code: {result['code_snippet']}")
+        print(f"GPT-3.5 Relevance: {result['gpt_response']}")
+        print("-" * 40)
