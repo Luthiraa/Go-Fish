@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
 export default function ResultPage() {
     const [endpoint, setEndpoint] = useState('');
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('/repos')
-            .then(response => response.json())
-            .then(data => {
-                setEndpoint(data.endpoint);
+        axios.get('/api/github')
+            .then(response => {
+                setEndpoint(response.data.endpoint);
                 setLoading(false);
             })
             .catch(error => {
