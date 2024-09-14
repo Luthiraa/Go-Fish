@@ -5,12 +5,29 @@ import InputAdornment from '@mui/material/InputAdornment';
 import React, { useState } from 'react';
 import ArrowCircleUpRoundedIcon from '@mui/icons-material/ArrowCircleUpRounded';
 import Button from '@mui/material/Button';
+import './SearchPage.css';
 
 export default function SearchPage() {
 
     const [inputValue, setInputValue] = useState('');
     const quickSearches = ["What is Go Fish?", "Who helped develop this?", "What is the purpose of this?"];
+    const createBubbles = () => {
+        const bubbleContainer = document.createElement('div');
+        bubbleContainer.className = 'bubble-container';
+        document.body.appendChild(bubbleContainer);
 
+        for (let i = 0; i < 20; i++) {
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            bubble.style.left = `${Math.random() * 100}vw`;
+            bubble.style.top = `${Math.random() * 100}vh`;
+            bubbleContainer.appendChild(bubble);
+        }
+    };
+
+    React.useEffect(() => {
+        createBubbles();
+    }, []);
     const handleQuickSearchClick = (searchText) => {
         setInputValue(searchText);
     };
@@ -49,6 +66,7 @@ export default function SearchPage() {
                         onKeyPress={handleKeyPress}
                         sx={{
                             borderRadius: 100,
+                            backgroundColor: 'white',
                             padding: '8px 30px', // Added padding to make the inside bigger
                             '& .MuiOutlinedInput-notchedOutline': {
                                 borderColor: 'darkblue',
