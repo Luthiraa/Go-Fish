@@ -2,6 +2,7 @@ import requests
 import bs4
 import urllib.parse
 from groq import Groq
+import logging
 
 # Initialize the Groq API client
 api_key = "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"
@@ -60,6 +61,7 @@ def summarize_text(text):
 
 # Main function to fetch top 5 results, process them, and send to Groq
 def process_search_and_summarize(query):
+    logging.basicConfig(level=logging.DEBUG)
     logging.debug(f"Processing query: {query}")
     search_results = google_search(query)
     all_texts = ""

@@ -24,7 +24,7 @@ def search_and_summarize():
         summary, resources = process_search_and_summarize(query)
         logging.debug(f"Summary: {summary}")
         logging.debug(f"Resources: {resources}")
-        return jsonify({"summary": "summary", "resources": "resources"})
+        return jsonify({"summary": summary, "resources": resources})
     except Exception as e:
         logging.error("Error occurred: %s", str(e))
         return jsonify({"error": str(e)}), 500

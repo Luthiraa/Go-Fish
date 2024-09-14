@@ -8,20 +8,23 @@ export default function ResultPage() {
     const query = new URLSearchParams(window.location.search).get('query');
 
     useEffect(() => {
-        if (query) {
-            axios.post('/api/search_and_summarize', { query })
-                .then(response => {
+        const fetchData = async () => {
+            if (query) {
+                try {
+                    const response = await axios.post('/api/search_and_summarize', { query });
                     setSummary(response.data.summary);
                     setResources(response.data.resources);
-                    setLoading(false);
-                })
-                .catch(error => {
+                } catch (error) {
                     console.error('Error fetching summary:', error);
+                } finally {
                     setLoading(false);
-                });
-        } else {
-            setLoading(false);
-        }
+                }
+            } else {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
     }, [query]);
 
     return (
@@ -36,8 +39,8 @@ export default function ResultPage() {
                     <>
                         <p>{summary}</p>
                         <ul>
-                            {resources.map((resource, index) => (
-                                <li key={index}><a href={resource} target="_blank" rel="noopener noreferrer">{resource}</a></li>
+                            {Array.isArray(resources) && resources.map((resource, index) => (
+                                <li key={index}><a href={resource} target="_blank" rel="noopener noreferrer">{summary}</a></li>
                             ))}
                         </ul>
                     </>
