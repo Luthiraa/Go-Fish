@@ -2,9 +2,8 @@ import { FormControl } from "@mui/material"
 import SearchIcon from '@mui/icons-material/Search';
 import OutlinedInput from "@mui/material/OutlinedInput"
 import InputAdornment from '@mui/material/InputAdornment';
-import Icon from '@mui/material/Icon';
 import React, { useState } from 'react';
-import Button from '@mui/material/Button';
+import ArrowCircleUpRoundedIcon from '@mui/icons-material/ArrowCircleUpRounded';
 
 export default function SearchPage() {
 
@@ -12,6 +11,16 @@ export default function SearchPage() {
 
     const handleInputChange = (event) => {
         setInputValue(event.target.value);
+    };
+
+    const handleSearchSubmit = () => {
+        // use input value to send to backend
+    };
+
+    const handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            handleSearchSubmit();
+        }
     };
 
     return (
@@ -25,13 +34,14 @@ export default function SearchPage() {
                         endAdornment={
                             inputValue && (
                                 <InputAdornment position="end">
-                                    
+                                    <ArrowCircleUpRoundedIcon onClick={handleSearchSubmit} style={{ cursor: 'pointer' }} />
                                 </InputAdornment>
                             )
                         }
                         placeholder="Discover..."
                         value={inputValue}
                         onChange={handleInputChange}
+                        onKeyPress={handleKeyPress}
                         sx={{
                             borderRadius: 100,
                             padding: '8px 30px', // Added padding to make the inside bigger
