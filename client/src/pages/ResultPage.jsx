@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import SailingRoundedIcon from '@mui/icons-material/SailingRounded';
 import axios from 'axios';
 import SearchBar from '../components/searchBar';
-import ReactMarkdown from 'react-markdown';  // Import react-markdown
+import ReactMarkdown from 'react-markdown';
 
 export default function ResultPage() {
     const [summary, setSummary] = useState('');
