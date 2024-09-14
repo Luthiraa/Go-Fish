@@ -1,12 +1,8 @@
-import { FormControl } from "@mui/material"
-import SearchIcon from '@mui/icons-material/Search';
-import OutlinedInput from "@mui/material/OutlinedInput"
-import InputAdornment from '@mui/material/InputAdornment';
 import React, { useState } from 'react';
-import ArrowCircleUpRoundedIcon from '@mui/icons-material/ArrowCircleUpRounded';
 import Button from '@mui/material/Button';
 import './SearchPage.css';
 import axios from "axios";
+import SearchBar from '../components/searchBar';
 
 export default function SearchPage() {
 
@@ -51,45 +47,7 @@ export default function SearchPage() {
         <div className="h-screen flex justify-center items-center">
             <div className="w-full max-w-md md:max-w-2xl lg:max-w-3xl">
                 <img src="logoFIN.png" alt="Logo" className="w-full"/>
-                <FormControl fullWidth sx={{ m: 1 }}>
-                    <OutlinedInput
-                        id="outlined-adornment-amount"
-                        startAdornment={<InputAdornment position="start"><SearchIcon /></InputAdornment>}
-                        endAdornment={
-                            inputValue && (
-                                <InputAdornment position="end">
-                                    <ArrowCircleUpRoundedIcon onClick={handleSearchSubmit} style={{ cursor: 'pointer' }} />
-                                </InputAdornment>
-                            )
-                        }
-                        placeholder="Discover..."
-                        value={inputValue}
-                        onChange={handleInputChange}
-                        onKeyPress={handleKeyPress}
-                        sx={{
-                            borderRadius: 100,
-                            backgroundColor: 'white',
-                            padding: '8px 30px', // Added padding to make the inside bigger
-                            '& .MuiOutlinedInput-notchedOutline': {
-                                borderColor: 'darkblue',
-                                borderWidth: 2,
-                            },
-                            '&:hover': {
-                                transition: 'all 0.3s',
-                                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-                            },
-                            '&:hover .MuiOutlinedInput-notchedOutline': {
-                                borderColor: 'darkblue',
-                            },
-                            '&.Mui-focused': {
-                                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-                            },
-                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                borderColor: 'darkblue',
-                            },
-                        }}
-                    />
-                </FormControl>
+                <SearchBar inputValue={inputValue} handleInputChange={handleInputChange} handleKeyPress={handleKeyPress} handleSearchSubmit={handleSearchSubmit} handleQuickSearchClick={handleQuickSearchClick}/>
                 <div className="flex max-md:flex-wrap justify-center space-x-3 max-md:space-y-3 mt-3">
                     {quickSearches.map((searchText, index) => (
                     <Button 
