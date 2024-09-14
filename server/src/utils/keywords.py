@@ -5,7 +5,6 @@ api_key = "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"
 client = Groq(api_key=api_key)
 
 def generate_keywords(search_terms):
-    # Update to use Groq ChatCompletion
     response = client.chat.completions.create(
         model="llama3-8b-8192",
         messages=[
@@ -29,12 +28,18 @@ def generate_keywords(search_terms):
             ],
             max_tokens=50
         )
-        additional_keywords[service.lower()] = response.choices[0].message.content.strip().split(', ')
+        service_keywords = response.choices[0].message.content.strip().split(', ')
+        if service_keywords:
+            additional_keywords[service.lower()] = service_keywords
 
     return keywords, additional_keywords
 
 if __name__ == "__main__":
-    search_terms = "python, machine learning, data analysis"
+    search_terms = "what is better, blue or green for a background color"
     keywords, additional_keywords = generate_keywords(search_terms)
+    print('')
+    print('')
     print("Generated Keywords:", keywords)
+    print('')
+    print('')
     print("Additional Keywords:", additional_keywords)

@@ -1,13 +1,16 @@
-import openai
+from groq import Groq
 from github import Github
 import secrets
 
-# Initialize OpenAI with your API key
-openai.api_key = secrets.openai_api
+# Set your Groq API key directly in the script
+api_key = "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"
+
+# Initialize the Groq client with the API key
+client = Groq(api_key=api_key)
 
 def search_code_with_gpt(query, repo_name, github_token):
     """
-    Searches for the most relevant code snippet in the given GitHub repository using GPT-3.5.
+    Searches for the most relevant code snippet in the given GitHub repository using Groq.
     
     :param query: The query string to search for.
     :param repo_name: The name of the GitHub repository in the form 'owner/repo'.
@@ -29,19 +32,19 @@ def search_code_with_gpt(query, repo_name, github_token):
                 file_content = repo.get_contents(content_file.path).decoded_content.decode('utf-8', errors='ignore')
                 lines = file_content.split('\n')
                 
-                # For each line, send the query and line of code to GPT-3.5
+                # For each line, send the query and line of code to Groq
                 for line_num, line in enumerate(lines, start=1):
                     if line.strip():  # Skip empty lines
-                        response = openai.ChatCompletion.create(
-                            model="gpt-3.5-turbo",
+                        response = client.chat.completions.create(
+                            model="llama3-8b-8192",
                             messages=[
                                 {"role": "system", "content": "You are a helpful assistant that helps search code repositories."},
                                 {"role": "user", "content": f"Does the following code match this query?\nQuery: {query}\nCode: {line}"}
                             ]
                         )
-                        relevance = response['choices'][0]['message']['content'].strip()
+                        relevance = response.choices[0].message.content.strip()
                         
-                        # If GPT indicates a match or relevance, record it
+                        # If Groq indicates a match or relevance, record it
                         if "yes" in relevance.lower() or "relevant" in relevance.lower():
                             search_results.append({
                                 'file_path': content_file.path,
@@ -55,7 +58,6 @@ def search_code_with_gpt(query, repo_name, github_token):
 
     return search_results
 
-# Example usage
 if __name__ == "__main__":
     github_token = "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"
     repo_name = "Luthiraa/Go-Fish"
@@ -67,5 +69,5 @@ if __name__ == "__main__":
     for result in results:
         print(f"Found in {result['file_path']} at line {result['line_number']}:")
         print(f"Code: {result['code_snippet']}")
-        print(f"GPT-3.5 Relevance: {result['gpt_response']}")
+        print(f"Groq Relevance: {result['gpt_response']}")
         print("-" * 40)
