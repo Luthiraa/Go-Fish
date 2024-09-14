@@ -1,116 +1,49 @@
-# import os
-# from googleapiclient.discovery import build
-# from groq import Groq
-
-# # Load API keys from environment variables
-# GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
-# GOOGLE_CSE_ID = os.getenv('GOOGLE_CSE_ID')
-# GROQ_API_KEY = os.getenv('GROQ_API_KEY')
-
-# # Initialize the Groq client with the API key
-# client = Groq(api_key="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")
-
-# def google_search(query, api_key, cse_id, num=5):
-#     service = build("customsearch", "v1", developerKey=api_key)
-#     res = service.cse().list(q=query, cx=cse_id, num=num).execute()
-#     return res['items']
-
-# def summarize_text(text):
-#     response = client.chat.completions.create(
-#         model="llama3-8b-8192",
-#         messages=[
-#             {"role": "system", "content": "You are a helpful assistant."},
-#             {"role": "user", "content": f"Summarize the following text in a short paragraph and provide key takeaways:\n\n{text}"}
-#         ],
-#         max_tokens=150
-#     )
-#     return response.choices[0].message.content.strip()
-
-# def summarize_search_query(query):
-#     search_results = google_search(query, GOOGLE_API_KEY, GOOGLE_CSE_ID)
-#     summaries = []
-#     for result in search_results:
-#         title = result.get('title')
-#         snippet = result.get('snippet')
-#         link = result.get('link')
-#         summary = summarize_text(snippet)
-#         summaries.append({
-#             'title': title,
-#             'link': link,
-#             'summary': summary
-#         })
-#     return summaries
-
-# # Example usage
-# if __name__ == "__main__":
-#     query = "Tell me about ollamma"
-#     summaries = summarize_search_query(query)
-#     for summary in summaries:
-#         print(f"Title: {summary['title']}")
-#         print(f"Link: {summary['link']}")
-#         print(f"Summary: {summary['summary']}")
-#         print("-" * 40)
-
-import os
 import requests
-from bs4 import BeautifulSoup
-from groq import Groq
+import bs4
+import urllib.parse
 
-# Load API keys from environment variables
-api_key = "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"
+text = "dog water"
+url = 'https://google.com/search?q=' + text
 
-client = Groq(api_key=api_key)
+request_result = requests.get(url)
 
-def google_search(query, num=5):
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"}
-    search_url = f"https://www.google.com/search?q={query}&num={num}"
-    response = requests.get(search_url, headers=headers)
-    soup = BeautifulSoup(response.text, "html.parser")
-    
-    search_results = []
-    for g in soup.find_all('div', class_='BNeawe vvjwJb AP7Wnd'):
-        title = g.get_text()
-        link = g.find_parent('a')['href']
-        snippet = g.find_next('div', class_='BNeawe s3v9rd AP7Wnd').get_text()
-        search_results.append({'title': title, 'link': link, 'snippet': snippet})
-        if len(search_results) >= num:
-            break
-    return search_results
+# Parse the fetched URL content with BeautifulSoup
+soup = bs4.BeautifulSoup(request_result.text, "html.parser")
 
+# Initialize a list to store the top 5 results
+results = []
 
-def summarize_text(text):
-    response = client.chat.completions.create(
-        model="llama3-8b-8192",
-        messages=[
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": f"Summarize the following text in a short paragraph and provide key takeaways:\n\n{text}"}
-        ],
-        max_tokens=150
-    )
-    return response.choices[0].message.content.strip()
+# Function to extract the text from a webpage
+def extract_page_text(page_url):
+    try:
+        page_response = requests.get(page_url)
+        page_soup = bs4.BeautifulSoup(page_response.text, "html.parser")
+        
+        # Extract text from the page. This is a simple method and can be improved based on the page structure.
+        paragraphs = page_soup.find_all('p')  # Extracts all text inside <p> tags
+        page_text = " ".join([para.get_text() for para in paragraphs])
+        return page_text
+    except Exception as e:
+        print(f"Error fetching {page_url}: {str(e)}")
+        return ""
 
-def summarize_search_query(query):
-    search_results = google_search(query)
-    summaries = []
-    for result in search_results:
-        title = result.get('title')
-        snippet = result.get('snippet')
-        link = result.get('link')
-        summary = summarize_text(snippet)
-        summaries.append({
-            'title': title,
-            'link': link,
-            'summary': summary
-        })
-    return summaries
-
-# Example usage
-if __name__ == "__main__":
-    query = "Tell me about ollamma"
-    summaries = summarize_search_query(query)
-    for summary in summaries:
-        print(f"Title: {summary['title']}")
-        print(f"Link: {summary['link']}")
-        print(f"Summary: {summary['summary']}")
+# Find all result divs, limiting to top 5
+for g in soup.find_all('div', class_='BNeawe vvjwJb AP7Wnd')[:5]:
+    title = g.get_text()
+    # Get the parent anchor tag's href (link) and clean it
+    parent_a_tag = g.find_parent('a')
+    if parent_a_tag and 'href' in parent_a_tag.attrs:
+        link = parent_a_tag['href']
+        # Google links usually start with "/url?q=", so we split and decode the URL
+        if link.startswith("/url?q="):
+            link = link.split("/url?q=")[1].split("&")[0]  # Extract the actual URL
+            link = urllib.parse.unquote(link)  # Decode the URL
+        
+        # Fetch and print the page text from each link
+        page_text = extract_page_text(link)
+        print(f"Title: {title}")
+        print(f"Link: {link}")
+        print(f"Extracted Text: {page_text[:500]}")  # Print the first 500 characters to avoid too much output
         print("-" * 40)
+
+
