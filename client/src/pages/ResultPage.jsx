@@ -5,6 +5,8 @@ import SearchBar from '../components/searchBar';
 import AsyncScriptLoader from 'react-async-script';
 import ReactMarkdown from 'react-markdown';
 import ArrowForwardIosRoundedIcon from '@mui/icons-material/ArrowForwardIosRounded';
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import docco from 'react-syntax-highlighter/dist/esm/styles/hljs/docco';
 
 export default function ResultPage() {
     const [summary, setSummary] = useState('');
@@ -110,13 +112,12 @@ export default function ResultPage() {
                     </div>
                 ) : (
                     <>
-                        {/* Display the GitHub snippet if available */}
                         {snippet && lineNumber && fileUrl && (
-                            <div className="bg-gray-100 p-4 rounded mb-4">
-                                <h2 className="text-xl font-semibold mb-2">GitHub Code Snippet</h2>
-                                <p>Found in line: {lineNumber}</p>
-                                <p>URL: <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">{fileUrl}</a></p>
-                                <pre className="bg-gray-200 p-2 rounded"><code>{snippet}</code></pre>
+                            <div className="bg-[#24292e] p-4 rounded-xl mb-4">
+                                <h2 className="text-xl font-semibold mb-2 text-white">GitHub Code Snippet</h2>
+                                <p className='text-white'>Found in line: {lineNumber}</p>
+                                <p className='text-white pb-2'>URL: <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="text-[#2dba4e] underline">{fileUrl}</a></p>
+                                <pre className="bg-[#5f6872] p-2 rounded"><SyntaxHighlighter language="javascript" style={docco}>{snippet}</SyntaxHighlighter></pre>
                             </div>
                         )}
                         <div className='flex'>
