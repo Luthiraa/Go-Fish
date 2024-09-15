@@ -3,7 +3,7 @@ import bs4
 import urllib.parse
 from groq import Groq
 import logging
-from .github_search import search_github_code  # Updated import
+from .github_search import search_github_code  
 
 # Initialize the Groq API client
 api_key = "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"
@@ -147,7 +147,7 @@ def process_search_and_summarize(query):
     # Get image URL
     image_url = google_image_search(query)
     logging.debug(f"Image URL: {image_url}")
-
+    summary = ""
     # Call search_github_code and format the summary
     github_results = search_github_code(query, "Luthiraa/Go-Fish", "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")
     if github_results:
@@ -156,7 +156,7 @@ def process_search_and_summarize(query):
         # #! Save the snippet to a text file
         # summary = f"Found in line: {line_number} \n \n URL: {file_url} \n```python\n{snippet}\n```\n"
     else:
-        summary = "No GitHub results found."
+        summary = None
 
     # Send the combined text and image URL to Groq for summarization
     summary += summarize_text(all_texts)
