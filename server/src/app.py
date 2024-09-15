@@ -22,19 +22,25 @@ def search_and_summarize():
     logging.debug(f"Received query: {query}")
     
     try:
-        summary, resources, image_url, reddit_embed, github_results = process_search_and_summarize(query)
+        summary, resources, image_url, reddit_embed, snippet,line_number, file_url = process_search_and_summarize(query)
         important = extract_important_words(query)
         logging.debug(f"Summary: {summary}")
         logging.debug(f"Important: {important}")
         logging.debug(f"Resources: {resources}")
         logging.debug(f"Reddit Embed: {reddit_embed}")
+        logging.debug(f"Snippet: {snippet}")
+        logging.debug(f"Line Number: {line_number}")
+        logging.debug(f"File URL: {file_url}")
         return jsonify({
             "summary": summary,
             "resources": resources,
             "important": important,
             "image_url": image_url,
             "reddit_embed": reddit_embed,
-            "github_results": github_results, 
+            "snippet": snippet,
+            "line_number": line_number,
+            "file_url": file_url
+
 
         })
     except Exception as e:

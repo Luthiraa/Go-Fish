@@ -164,7 +164,7 @@ def process_search_and_summarize(query):
     logging.debug(f"Summary from Groq: {summary}")
 
     # Return the summary, resources, image URL, and Reddit embed
-    return summary, resource_list, image_url, reddit_embed, github_results
+    return summary, resource_list, image_url, reddit_embed, snippet, line_number, file_url
 
 if __name__ == "__main__":
     query = "find me where summarize_text is"
