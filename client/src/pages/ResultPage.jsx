@@ -2,13 +2,16 @@ import React, { useEffect, useState } from 'react';
 import SailingRoundedIcon from '@mui/icons-material/SailingRounded';
 import axios from 'axios';
 import SearchBar from '../components/searchBar';
+import AsyncScriptLoader from 'react-async-script';
 import ReactMarkdown from 'react-markdown';
+import ArrowForwardIosRoundedIcon from '@mui/icons-material/ArrowForwardIosRounded';
 
 export default function ResultPage() {
     const [summary, setSummary] = useState('');
     const [inputValue, setInputValue] = useState('');
     const [resources, setResources] = useState([]);
     const [image, setImage] = useState('');
+    const [reddit, setReddit] = useState({});
     const [loading, setLoading] = useState(true);
     const query = new URLSearchParams(window.location.search).get('query');
     const snippet = new URLSearchParams(window.location.search).get('snippet');
@@ -38,6 +41,21 @@ export default function ResultPage() {
         axios.post('/api/search', { query: inputValue });
     };
 
+    const RedditEmbed = AsyncScriptLoader(
+        'https://embed.redditmedia.com/widgets/platform.js'
+    )(({ isScriptLoadSucceed }) => {
+        if (isScriptLoadSucceed && reddit.html) {
+            return (
+                <div
+                    dangerouslySetInnerHTML={{ __html: reddit.html }}
+                    className="reddit-embed mt-4"
+                    style={{ transform: 'scale(0.2)', transformOrigin: 'top left' }}
+                />
+            );
+        }
+        return null;
+    });
+
     // Fetch data (summary and resources) from the API
     useEffect(() => {
         const fetchData = async () => {
@@ -47,17 +65,14 @@ export default function ResultPage() {
                     setSummary(response.data.summary);  // Set summary from API
                     setResources(response.data.resources);  // Set resources from API
                     setImage(response.data.image_url);  // Set image from API
-                    console.log("whooo here it is");
-                    console.log(response.data.reddit_embed);
-                    console.log(image);
-
+                    setReddit(response.data.reddit_embed || {});
                 } catch (error) {
                     console.error('Error fetching summary:', error);
                 } finally {
                     setLoading(false);
                 }
             } else {
-                setLoading(false);  
+                setLoading(false);
             }
         };
 
@@ -92,22 +107,33 @@ export default function ResultPage() {
                     </div>
                 ) : (
                     <>
-                    <div className='flex'>
-                        {/* Render the summary as Markdown */}
-                        <div>
-                            <ReactMarkdown>{summary}</ReactMarkdown>
+                        <div className='flex'>
+                            {/* Render the summary as Markdown */}
+                            <div>
+                                <ReactMarkdown>{summary}</ReactMarkdown>
+                            </div>
+                            {/* Display the image */}
+                            {image && (
+                                <img src={image} alt="Result" className="mt-4 w-64 h-64 object-contain" />
+                            )}
                         </div>
-                        {/* Display the image */}
-                        {image && (
-                            <img src={image} alt="Result" className="mt-4 w-64 h-64 object-contain" />
-                        )}
-                    </div>
+                        <div className='my-6'>
+                            {/* Display the Reddit embed */}
+                            <div
+                                dangerouslySetInnerHTML={{ __html: reddit.html }}
+                                className="reddit-embed"
+                            />
+
+                            <RedditEmbed />
+                        </div>
 
                         {/* Display the list of resources */}
+                        <h1 className='text-2xl font-medium'>Resources: </h1>
                         <ul className="mt-4">
                             {Array.isArray(resources) && resources.map((resource, index) => (
-                                <li key={index}>
-                                    <a href={resource} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+                                <li key={index} className="flex items-center py-1">
+                                    <ArrowForwardIosRoundedIcon className='text-blue-500' sx={{ fontSize: 16 }} />
+                                    <a href={resource} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline ml-1">
                                         {resource}
                                     </a>
                                 </li>
