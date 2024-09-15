@@ -6,7 +6,7 @@ import logging
 from .github_search import search_github_code  
 
 # Initialize the Groq API client
-api_key = "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"
+api_key = "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"
 client = Groq(api_key=api_key)
 
 # Function to extract the text from a webpage
@@ -156,7 +156,7 @@ def process_search_and_summarize(query):
         # #! Save the snippet to a text file
         # summary = f"Found in line: {line_number} \n \n URL: {file_url} \n```python\n{snippet}\n```\n"
     else:
-        summary = None
+        summary = ""
 
     # Send the combined text and image URL to Groq for summarization
     summary += summarize_text(all_texts)
