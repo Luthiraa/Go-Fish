@@ -1,0 +1,10 @@
+First occurrence at line: 95
+URL: https://github.com/Luthiraa/Go-Fish/blob/e975c5e15aaa9371e48efb7a2dfeb7dabee7be49/server/src/services/github_search.py
+
+
+# Example usage of the function
+if __name__ == "__main__":
+    search_query = "find me where summarize_text is"  # The code snippet or term you're searching for
+    repository = "Luthiraa/Go-Fish"  # GitHub repository in "owner/repo" format
+    github_token = "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"  # GitHub Personal Access Token
+    
