@@ -7,10 +7,10 @@ import ReactMarkdown from 'react-markdown';
 import ArrowForwardIosRoundedIcon from '@mui/icons-material/ArrowForwardIosRounded';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import docco from 'react-syntax-highlighter/dist/esm/styles/hljs/docco';
+import ShopifyItem from '../components/ShopifyItem';
 
 export default function ResultPage() {
     const [summary, setSummary] = useState('');
-    const [detailed, setDetailed] = useState('');
     const [inputValue, setInputValue] = useState('');
     const [resources, setResources] = useState([]);
     const [image, setImage] = useState('');
@@ -19,6 +19,7 @@ export default function ResultPage() {
     const [snippet, setSnippet] = useState('');
     const [lineNumber, setLineNumber] = useState('');
     const [fileUrl, setFileUrl] = useState('');
+    const [products, setProducts] = useState([]);
     const query = new URLSearchParams(window.location.search).get('query');
 
     // Handle quick search click
@@ -72,7 +73,7 @@ export default function ResultPage() {
                     setSnippet(response.data.snippet);  // Set snippet from API
                     setLineNumber(response.data.line_number);  // Set line number from API
                     setFileUrl(response.data.file_url);  // Set file URL from API
-                    setDetailed(response.data.detailed);
+                    setProducts(response.data.matching_products);  // Set products from API
                 } catch (error) {
                     console.error('Error fetching summary:', error);
                 } finally {
@@ -122,30 +123,42 @@ export default function ResultPage() {
                                 <pre className="bg-[#5f6872] p-2 rounded"><SyntaxHighlighter language="javascript" style={docco}>{snippet}</SyntaxHighlighter></pre>
                             </div>
                         )}
-                       <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-                {/* Left Column (Summary + Reddit Embed) */}
-                <div className='md:col-span-2 flex flex-col'>
-                    {/* Render the summary as Markdown */}
-                    <ReactMarkdown>{summary}</ReactMarkdown>
-                    {/* Display the Reddit embed under the summary */}
-                    <div className='mt-4'>
-                        <div
-                            dangerouslySetInnerHTML={{ __html: reddit.html }}
-                            className="reddit-embed"
-                        />
-                        <RedditEmbed />
-                    </div>
-                    <ReactMarkdown>{detailed}</ReactMarkdown>
-                </div>
-                {/* Right Column (Image) */}
-                <div className='flex justify-center'>
-                    {image && (
-                        <img src={image} alt="Result" className="mt-4 w-64 h-64 object-contain" />
-                    )}
-                </div>
-            </div>
-            {/* Resources */}
-            <h1 className='text-2xl font-medium mt-6'>Resources: </h1>
+                        <div className='flex'>
+                            {/* Render the summary as Markdown */}
+                            <div>
+                                <ReactMarkdown>{summary}</ReactMarkdown>
+                            </div>
+                            {/* Display the image */}
+                            {image && (
+                                <img src={image} alt="Result" className="mt-4 w-64 h-64 object-contain" />
+                            )}
+                        </div>
+                        <div className='my-6'>
+                            {/* Display the Reddit embed */}
+                            <div
+                                dangerouslySetInnerHTML={{ __html: reddit.html }}
+                                className="reddit-embed"
+                            />
+
+                            <RedditEmbed />
+                        </div>
+
+                        {products.length > 0 && (
+                            <h1 className='text-2xl font-medium'>Shopify Store: </h1>
+                        )}
+                        <div className='my-6'>
+                            {/* Display the list of products */}
+                            <div className='flex flex-row overflow-x-auto space-x-4'>
+                                {Array.isArray(products) && products.map((product, index) => (
+                                    <div key={index} className="flex-shrink-0 w-64">
+                                        <ShopifyItem name={product.title} url={product.ProductURL} price={product.Price} image={product.AbsoluteImageURL} />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Display the list of resources */}
+                        <h1 className='text-2xl font-medium'>Resources: </h1>
                         <ul className="mt-4">
                             {Array.isArray(resources) && resources.map((resource, index) => (
                                 <li key={index} className="flex items-center py-1">
