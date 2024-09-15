@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/go-fish/static/css/main.cbeb8e06.css",
+    "main.js": "/go-fish/static/js/main.ef377cd1.js",
+    "index.html": "/go-fish/index.html",
+    "main.cbeb8e06.css.map": "/go-fish/static/css/main.cbeb8e06.css.map",
+    "main.ef377cd1.js.map": "/go-fish/static/js/main.ef377cd1.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.cbeb8e06.css",
+    "static/js/main.ef377cd1.js"
+  ]
+}
