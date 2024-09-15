@@ -21,12 +21,12 @@ def search_and_summarize():
     logging.debug(f"Received query: {query}")
     
     try:
-        summary, resources = process_search_and_summarize(query)
+        summary, resources, image_url = process_search_and_summarize(query)
         important = extract_important_words(query)
         logging.debug(f"Summary: {summary}")
         logging.debug(f"Important: {important}")
         logging.debug(f"Resources: {resources}")
-        return jsonify({"summary": summary, "resources": resources, "important": important})
+        return jsonify({"summary": summary, "resources": resources, "important": important, "image_url": image_url})
     except Exception as e:
         logging.error("Error occurred: %s", str(e))
         return jsonify({"error": str(e)}), 500

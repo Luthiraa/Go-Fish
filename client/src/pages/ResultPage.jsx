@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import SailingRoundedIcon from '@mui/icons-material/SailingRounded';
 import axios from 'axios';
 import SearchBar from '../components/searchBar';
-import ReactMarkdown from 'react-markdown';  // Import react-markdown
+import ReactMarkdown from 'react-markdown';
 
 export default function ResultPage() {
     const [summary, setSummary] = useState('');
@@ -58,7 +58,9 @@ export default function ResultPage() {
     return (
         <div className="flex flex-col items-center justify-center min-h-screen space-y-4">
             <div className='flex flex-col md:flex-row items-center w-full max-w-md md:max-w-2xl lg:max-w-3xl mt-1'>
-                <img src="logoFIN.png" alt="Logo" className="h-12 w-auto my-4 md:hidden" />
+                <a href="/">
+                    <img src="logoFIN.png" alt="Logo" className="h-12 w-auto my-4 md:hidden"/>
+                </a>
                 {/* Search bar for querying */}
                 <SearchBar 
                     inputValue={inputValue}
@@ -67,7 +69,7 @@ export default function ResultPage() {
                     handleSearchSubmit={handleSearchSubmit}
                     handleQuickSearchClick={handleQuickSearchClick} 
                 />
-                <img src="logoFIN.png" alt="Logo" className="h-12 w-auto ml-4 max-md:hidden" />
+                <img src="logoFIN.png" alt="Logo" className="h-12 w-auto ml-4 max-md:hidden cursor-pointer hover:scale-105 transition-all" onClick={(e) => window.location.href = "/"}/>
             </div>
             <div className="bg-white p-8 rounded shadow-md w-full max-w-6xl overflow-y-scroll" style={{height: "80svh"}}>
                 <div className='flex flex-col md:flex-row items-center'>
