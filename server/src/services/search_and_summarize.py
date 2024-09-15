@@ -267,7 +267,8 @@ def process_search_and_summarize(query):
         github_url, github_line_number, github_snippet = None, None, None
     else:
         # Call search_github_code and format the summary
-        github_token = "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" # Get GitHub Personal Access Token from environment variable
+        #! export github token
+        github_token = "" # Get GitHub Personal Access Token from environment variable
         if not github_token:
             logging.error("GitHub token not found. Please set the GITHUB_TOKEN environment variable.")
         else:
