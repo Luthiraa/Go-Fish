@@ -6,6 +6,7 @@ import SearchBar from '../components/searchBar';
 import { OutlinedInput } from '@mui/material';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import AnimatedLogoCloud from '../components/AnimatedLogoCloud';
+import QuickResponse from '../components/QuickResponse';
 
 export default function SearchPage() {
 
@@ -70,24 +71,11 @@ export default function SearchPage() {
                 <SearchBar inputValue={inputValue} handleInputChange={handleInputChange} handleKeyPress={handleKeyPress} handleSearchSubmit={handleSearchSubmit} handleQuickSearchClick={handleQuickSearchClick}/>
                 <div className="flex max-md:flex-wrap justify-center space-x-3 max-md:space-y-3 mt-3">
                     {quickSearches.map((searchText, index) => (
-                    <Button 
+                    <QuickResponse 
                         key={index} 
+                        text={searchText} 
                         onClick={() => handleQuickSearchClick(searchText)}
-                        sx={{
-                            borderRadius: '50px',
-                            padding: '8px 30px',
-                            backgroundColor: 'orange',
-                            color: 'black',
-                            textTransform: 'capitalize',
-                            transition: 'all 0.3s',
-                            '&:hover': {
-                                transition: 'all 0.3s',
-                                scale: 1.05,
-                            },
-                        }}
-                    >
-                        {searchText}
-                    </Button>
+                    />
                     ))}
                 </div>
                 <h1 className='text-2xl text-center mt-16 font-semibold text-[#4A8FF7] drop-shadow-sm'>Powered By: </h1>
