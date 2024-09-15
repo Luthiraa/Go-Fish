@@ -65,9 +65,7 @@ export default function ResultPage() {
                     setSummary(response.data.summary);  // Set summary from API
                     setResources(response.data.resources);  // Set resources from API
                     setImage(response.data.image_url);  // Set image from API
-                    setReddit(response.data.reddit_embed);
-                    console.log(response.data.reddit_embed);
-
+                    setReddit(response.data.reddit_embed || {});
                 } catch (error) {
                     console.error('Error fetching summary:', error);
                 } finally {
