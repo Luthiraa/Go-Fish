@@ -13,10 +13,10 @@ export default function ResultPage() {
     const [image, setImage] = useState('');
     const [reddit, setReddit] = useState({});
     const [loading, setLoading] = useState(true);
+    const [snippet, setSnippet] = useState('');
+    const [lineNumber, setLineNumber] = useState('');
+    const [fileUrl, setFileUrl] = useState('');
     const query = new URLSearchParams(window.location.search).get('query');
-    const snippet = new URLSearchParams(window.location.search).get('snippet');
-    const line_number = new URLSearchParams(window.location.search).get('line_number');
-    const file_url = new URLSearchParams(window.location.search).get('file_url');
 
     // Handle quick search click
     const handleQuickSearchClick = (searchText) => {
@@ -66,6 +66,9 @@ export default function ResultPage() {
                     setResources(response.data.resources);  // Set resources from API
                     setImage(response.data.image_url);  // Set image from API
                     setReddit(response.data.reddit_embed || {});
+                    setSnippet(response.data.snippet);  // Set snippet from API
+                    setLineNumber(response.data.line_number);  // Set line number from API
+                    setFileUrl(response.data.file_url);  // Set file URL from API
                 } catch (error) {
                     console.error('Error fetching summary:', error);
                 } finally {
@@ -107,6 +110,15 @@ export default function ResultPage() {
                     </div>
                 ) : (
                     <>
+                        {/* Display the GitHub snippet if available */}
+                        {snippet && lineNumber && fileUrl && (
+                            <div className="bg-gray-100 p-4 rounded mb-4">
+                                <h2 className="text-xl font-semibold mb-2">GitHub Code Snippet</h2>
+                                <p>Found in line: {lineNumber}</p>
+                                <p>URL: <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">{fileUrl}</a></p>
+                                <pre className="bg-gray-200 p-2 rounded"><code>{snippet}</code></pre>
+                            </div>
+                        )}
                         <div className='flex'>
                             {/* Render the summary as Markdown */}
                             <div>
