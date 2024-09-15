@@ -1,50 +1,52 @@
-# Import BeautifulSoup and requests libraries
 import requests
-import bs4
-import urllib.parse
+import json
 
-# Define the search keyword
-text = "dog water"
-url = 'https://google.com/search?q=' + text
+def search_github_repo(query, repo, language=None, max_results=5):
+    # Define the GitHub API URL for searching code
+    api_url = 'https://api.github.com/search/code'
+    
+    # Create the query parameters
+    search_query = f'{query}+repo:{repo}'
+    if language:
+        search_query += f'+language:{language}'
+    
+    # Set the parameters
+    params = {
+        'q': search_query,
+        'per_page': max_results
+    }
+    
+    # Make the request to the GitHub API
+    response = requests.get(api_url, params=params)
+    
+    # Check for successful response
+    if response.status_code == 200:
+        # Parse the JSON response
+        results = response.json()['items']
+        if results:
+            print(f'Found {len(results)} code snippets:')
+            for idx, result in enumerate(results, 1):
+                # Fetch the actual content of the file
+                file_url = result['html_url']
+                raw_url = file_url.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/')
+                file_response = requests.get(raw_url)
+                
+                if file_response.status_code == 200:
+                    print(f"\nSnippet {idx} - File: {result['name']} (Repo: {result['repository']['full_name']})")
+                    print(f"URL: {file_url}")
+                    print("\n```")
+                    print(file_response.text[:500])  # Display the first 500 characters of the file
+                    print("```")
+                else:
+                    print(f"Could not fetch content for {result['name']}.")
+        else:
+            print('No code snippets found.')
+    else:
+        print(f'Error: {response.status_code} - {response.text}')
 
-# Fetch the URL data
-request_result = requests.get(url)
-
-# Parse the fetched URL content with BeautifulSoup
-soup = bs4.BeautifulSoup(request_result.text, "html.parser")
-
-# Initialize a list to store the top 5 results
-results = []
-
-# Function to extract the text from a webpage
-def extract_page_text(page_url):
-    try:
-        page_response = requests.get(page_url)
-        page_soup = bs4.BeautifulSoup(page_response.text, "html.parser")
-        
-        # Extract text from the page. This is a simple method and can be improved based on the page structure.
-        paragraphs = page_soup.find_all('p')  # Extracts all text inside <p> tags
-        page_text = " ".join([para.get_text() for para in paragraphs])
-        return page_text
-    except Exception as e:
-        print(f"Error fetching {page_url}: {str(e)}")
-        return ""
-
-# Find all result divs, limiting to top 5
-for g in soup.find_all('div', class_='BNeawe vvjwJb AP7Wnd')[:5]:
-    title = g.get_text()
-    # Get the parent anchor tag's href (link) and clean it
-    parent_a_tag = g.find_parent('a')
-    if parent_a_tag and 'href' in parent_a_tag.attrs:
-        link = parent_a_tag['href']
-        # Google links usually start with "/url?q=", so we split and decode the URL
-        if link.startswith("/url?q="):
-            link = link.split("/url?q=")[1].split("&")[0]  # Extract the actual URL
-            link = urllib.parse.unquote(link)  # Decode the URL
-        
-        # Fetch and print the page text from each link
-        page_text = extract_page_text(link)
-        print(f"Title: {title}")
-        print(f"Link: {link}")
-        print(f"Extracted Text: {page_text[:500]}")  # Print the first 500 characters to avoid too much output
-        print("-" * 40)
+# Example usage
+if __name__ == "__main__":
+    search_query = input("Enter your search query: ")
+    repository = input("Enter the GitHub repository (owner/repo): ")
+    language = input("Enter the programming language (optional): ")
+    search_github_repo(search_query, repository, language)
