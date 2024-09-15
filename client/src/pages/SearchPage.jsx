@@ -5,6 +5,7 @@ import axios from "axios";
 import SearchBar from '../components/searchBar';
 import { OutlinedInput } from '@mui/material';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
+import AnimatedLogoCloud from '../components/AnimatedLogoCloud';
 
 export default function SearchPage() {
 
@@ -89,6 +90,8 @@ export default function SearchPage() {
                     </Button>
                     ))}
                 </div>
+                <h1 className='text-2xl text-center mt-16 font-semibold text-[#4A8FF7] drop-shadow-sm'>Powered By: </h1>
+                <AnimatedLogoCloud></AnimatedLogoCloud>
             </div>
             <div className="absolute bottom-4 left-4 cursor-pointer hover:rotate-180 transition-all" onClick={handleSettingsClick}>
                 <SettingsRoundedIcon />
