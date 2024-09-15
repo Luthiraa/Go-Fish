@@ -21,16 +21,22 @@ def search_and_summarize():
     logging.debug(f"Received query: {query}")
     
     try:
-        summary, resources, image_url = process_search_and_summarize(query)
+        summary, resources, image_url, reddit_embed = process_search_and_summarize(query)
         important = extract_important_words(query)
         logging.debug(f"Summary: {summary}")
         logging.debug(f"Important: {important}")
         logging.debug(f"Resources: {resources}")
-        return jsonify({"summary": summary, "resources": resources, "important": important, "image_url": image_url})
+        logging.debug(f"Reddit Embed: {reddit_embed}")
+        return jsonify({
+            "summary": summary,
+            "resources": resources,
+            "important": important,
+            "image_url": image_url,
+            "reddit_embed": reddit_embed
+        })
     except Exception as e:
         logging.error("Error occurred: %s", str(e))
         return jsonify({"error": str(e)}), 500
-
 
 if __name__ == '__main__':
     app.run(debug=True)
