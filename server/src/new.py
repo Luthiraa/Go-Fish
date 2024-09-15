@@ -1,72 +1,67 @@
-from googlesearch import search
 import requests
-from bs4 import BeautifulSoup
+import os
 
-# Step 1: Get the top 5 search results from Google
-def get_top_google_results(query, num_results=5):
-    search_results = []
-    for result in search(query, num=num_results, stop=num_results):
-        search_results.append(result)
-    return search_results
+# Function to save the snippet to a text file
+def save_snippet_to_file(file_name, snippet, query, line_number, file_url):
+    # Create a directory for the snippets if it doesn't exist
+    if not os.path.exists('snippets'):
+        os.makedirs('snippets')
+    
+    # Save the snippet to a text file
+    with open(f'snippets/{file_name}.txt', 'w') as f:
+        f.write(f"First occurrence at line: {line_number}\n")
+        f.write(f"URL: {file_url}\n\n")
+        f.write(snippet)
 
-# Step 2: Parse and extract text from a web page
-def extract_text_from_url(url):
-    try:
-        response = requests.get(url)
-        soup = BeautifulSoup(response.content, 'html.parser')
+    print(f"Snippet saved to snippets/{file_name}.txt")
 
-        # Extract visible text (you can improve this extraction depending on the website structure)
-        texts = soup.findAll(text=True)
-        visible_texts = filter(tag_visible, texts)
-        return u" ".join(t.strip() for t in visible_texts)
-    except Exception as e:
-        print(f"Failed to fetch content from {url}: {e}")
-        return None
-
-# Helper function to filter visible text
-def tag_visible(element):
-    if element.parent.name in ['style', 'script', 'head', 'title', 'meta', '[document]']:
-        return False
-    if isinstance(element, Comment):
-        return False
-    return True
-
-# Step 3: Summarize the text using the Groq API (replace with actual API URL)
-def summarize_text_with_groq(text):
-    groq_api_url = "https://api.groq.com/summarize"  # Replace with actual API endpoint
-    headers = {"Content-Type": "application/json"}
-    payload = {
-        "text": text,
-        "summary_length": "short"  # Adjust as needed
+# Function to search for code snippets in a GitHub repository
+def search_github_code(query, repo, token=None):
+    # Define the GitHub API search URL
+    url = "https://api.github.com/search/code"
+    
+    # Set up query parameters
+    search_query = f"{query} in:file repo:{repo}"
+    params = {
+        'q': search_query
     }
-    try:
-        response = requests.post(groq_api_url, json=payload, headers=headers)
-        summary = response.json().get("summary")
-        return summary
-    except Exception as e:
-        print(f"Failed to summarize text: {e}")
-        return None
-
-# Step 4: Main function to run the search and summarization process
-def main():
-    query = input("Enter search query: ")
+    headers = {
+        "Accept": "application/vnd.github.v3.text-match+json"
+    }
+    if token:
+        headers["Authorization"] = f"token {token}"
     
-    # Get top 5 search results
-    search_results = get_top_google_results(query)
-    print(f"Top {len(search_results)} search results fetched.")
+    # Send GET request to GitHub Search API
+    response = requests.get(url, headers=headers, params=params)
     
-    # Process each result
-    for index, url in enumerate(search_results):
-        print(f"\nFetching and summarizing content from: {url}")
-        text_content = extract_text_from_url(url)
-        if text_content:
-            summary = summarize_text_with_groq(text_content)
-            if summary:
-                print(f"Summary {index + 1}: {summary}")
+    # Check if the request was successful
+    if response.status_code == 200:
+        results = response.json()
+        print(f"Found {results['total_count']} results for '{query}' in '{repo}':\n")
+        
+        # Loop through each search result and fetch the code snippet
+        for item in results['items']:
+            file_name = item['name']
+            file_url = item['html_url']
+            print(f"Fetching code from: {file_url}")
+            
+            # Extract the matching lines from the search result
+            if 'text_matches' in item:
+                snippet = item['text_matches'][0]['fragment']
+                line_number = item['text_matches'][0]['matches'][0]['indices'][0] + 1
+                # Save the snippet to a text file
+                save_snippet_to_file(file_name, snippet, query, line_number, file_url)
             else:
-                print("Could not generate summary.")
-        else:
-            print("No text content to summarize.")
+                print(f"No text matches found for '{query}' in {file_name}")
+    else:
+        print(f"Failed to fetch results. Status code: {response.status_code}")
+        print(response.json())
 
+# Example usage of the function
 if __name__ == "__main__":
-    main()
+    search_query = "summarize_text"  # The code snippet or term you're searching for
+    repository = "Luthiraa/Go-Fish"  # GitHub repository in "owner/repo" format
+    github_token = "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"  # GitHub Personal Access Token
+    
+    # Call the search function
+    search_github_code(search_query, repository, github_token)
