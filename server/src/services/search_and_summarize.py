@@ -4,8 +4,13 @@ import urllib.parse
 import json
 import logging
 from groq import Groq
+<<<<<<< HEAD
 from .github_search import extract_keyword, search_github_code  
 from .shopify import fetch_shopify_products 
+=======
+from .github_search import search_github_code  
+from .shopify import fetch_shopify_products  # Imported fetch_shopify_products
+>>>>>>> e975c5e15aaa9371e48efb7a2dfeb7dabee7be49
 
 # Initialize the Groq API client
 api_key = "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"
@@ -213,6 +218,7 @@ def process_search_and_summarize(query):
 
     # Initialize summary
     summary = ""
+<<<<<<< HEAD
 
     # Extract the main keyword from the query
     keyword = extract_keyword(query)
@@ -235,6 +241,19 @@ def process_search_and_summarize(query):
                 summary += f"Found in line: {github_line_number}\n\nURL: [{github_url}]({github_url})\n\n```python\n{github_snippet}\n```\n"
             else:
                 summary += "No GitHub results found."
+=======
+    snippet = None
+    line_number = None
+    file_url = None
+
+    # Call search_github_code and format the summary
+    snippet, line_number, file_url = search_github_code(query, "Luthiraa/Go-Fish", "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")
+    if snippet:
+        # Format the URL as a hyperlink and the snippet as a code block
+        summary += f"Found in line: {line_number}\n\nURL: [{file_url}]({file_url})\n\n```python\n{snippet}\n```\n"
+    else:
+        summary += "No GitHub results found."
+>>>>>>> e975c5e15aaa9371e48efb7a2dfeb7dabee7be49
 
     # Send the combined text and image URL to Groq for summarization
     summary += summarize_text(all_texts)
@@ -246,17 +265,29 @@ def process_search_and_summarize(query):
     logging.debug(f"Matching products: {matching_products}")
 
     # Return the summary, resources, image URL, Reddit embed, GitHub results, and matching products
+<<<<<<< HEAD
     return summary, resource_list, image_url, reddit_embed, github_url, github_line_number, github_snippet, matching_products
 
 if __name__ == "__main__":
     query = "find me where summarize_text is"
     summary, resources, image_url, reddit_embed, github_url, github_line_number, github_snippet, matching_products = process_search_and_summarize(query)
+=======
+    return summary, resource_list, image_url, reddit_embed, snippet, line_number, file_url, matching_products
+
+if __name__ == "__main__":
+    query = "find me where summarize_text is"
+    summary, resources, image_url, reddit_embed, snippet, line_number, file_url, matching_products = process_search_and_summarize(query)
+>>>>>>> e975c5e15aaa9371e48efb7a2dfeb7dabee7be49
     important = extract_important_words(query)
     print("### Summary from Groq ###")
     print(summary)
     print("### Matching Products ###")
+<<<<<<< HEAD
     print(matching_products)
     print("### GitHub Search Results ###")
     print(f"URL: {github_url}")
     print(f"Line Number: {github_line_number}")
     print(f"Snippet: {github_snippet}")
+=======
+    print(matching_products)
+>>>>>>> e975c5e15aaa9371e48efb7a2dfeb7dabee7be49

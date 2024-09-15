@@ -49,10 +49,25 @@ def search_github_code(query, repo, token=None):
     print(f"Sending request to GitHub API: {url}")
     print(f"Headers: {headers}")
     print(f"Params: {params}")
+<<<<<<< HEAD
     
     try:
         # Send GET request to GitHub Search API
         response = requests.get(url, headers=headers, params=params)
+=======
+    
+    # Send GET request to GitHub Search API
+    response = requests.get(url, headers=headers, params=params)
+    
+    # Print the response status code and headers for debugging
+    print(f"Response status code: {response.status_code}")
+    print(f"Response headers: {response.headers}")
+    
+    # Check if the request was successful
+    if response.status_code == 200:
+        results = response.json()
+        print(f"Found {results['total_count']} results for '{keyword}' in '{repo}':\n")
+>>>>>>> e975c5e15aaa9371e48efb7a2dfeb7dabee7be49
         
         # Print the response status code and headers for debugging
         print(f"Response status code: {response.status_code}")
@@ -68,6 +83,7 @@ def search_github_code(query, repo, token=None):
             results = response.json()
             print(f"Found {results['total_count']} results for '{keyword}' in '{repo}':\n")
             
+<<<<<<< HEAD
             # Process only the top search result
             if results['items']:
                 top_result = results['items'][0]
@@ -89,6 +105,27 @@ def search_github_code(query, repo, token=None):
         return top_url, top_line_number, top_snippet
     except Exception as e:
         print(f"Error during GitHub search: {str(e)}")
+=======
+            # Extract the matching lines from the top result
+            if 'text_matches' in top_result:
+                snippet = top_result['text_matches'][0]['fragment']
+                line_number = top_result['text_matches'][0]['matches'][0]['indices'][0] + 1
+                # Save the snippet to a text file
+                save_snippet_to_file(file_name, snippet, line_number, file_url)
+                result = [snippet, line_number, file_url]
+                print(f"First occurrence at line: {line_number}")
+                print(f"URL: {file_url}")
+                return snippet, line_number, file_url
+            else:
+                print(f"No text matches found for '{keyword}' in {file_name}")
+                return None, None, None
+        else:
+            print(f"No results found for '{keyword}' in '{repo}'")
+            return None, None, None
+    else:
+        print(f"Failed to fetch results. Status code: {response.status_code}")
+        print(response.json())
+>>>>>>> e975c5e15aaa9371e48efb7a2dfeb7dabee7be49
         return None, None, None
 
 # Example usage of the function
@@ -97,6 +134,7 @@ if __name__ == "__main__":
     repository = "Luthiraa/Go-Fish"  # GitHub repository in "owner/repo" format
     github_token = "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"  # Get GitHub Personal Access Token from environment variable
     
+<<<<<<< HEAD
     if not github_token:
         print("GitHub token not found. Please set the GITHUB_TOKEN environment variable.")
     else:
@@ -107,3 +145,10 @@ if __name__ == "__main__":
         print("URL:", top_url)
         print("Top Line Number:", top_line_number)
         print("Top Snippet:", top_snippet)
+=======
+    # Call the search function and get the snippet, line number, and URL as a list
+    snippet, line_number, file_url = search_github_code(search_query, repository, github_token)
+    if snippet:
+        print("Snippet as string:")
+        print(snippet)
+>>>>>>> e975c5e15aaa9371e48efb7a2dfeb7dabee7be49
