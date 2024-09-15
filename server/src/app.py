@@ -32,7 +32,8 @@ def search_and_summarize():
             "resources": resources,
             "important": important,
             "image_url": image_url,
-            "reddit_embed": reddit_embed
+            "reddit_embed": reddit_embed,
+
         })
     except Exception as e:
         logging.error("Error occurred: %s", str(e))

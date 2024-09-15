@@ -1,6 +1,7 @@
 import requests
 import os
 
+
 # Function to save the snippet to a text file
 def save_snippet_to_file(file_name, snippet, query, line_number, file_url):
     # Create a directory for the snippets if it doesn't exist
@@ -17,10 +18,7 @@ def save_snippet_to_file(file_name, snippet, query, line_number, file_url):
 
 # Function to search for code snippets in a GitHub repository
 def search_github_code(query, repo, token=None):
-    # Define the GitHub API search URL
     url = "https://api.github.com/search/code"
-    
-    # Set up query parameters
     search_query = f"{query} in:file repo:{repo}"
     params = {
         'q': search_query

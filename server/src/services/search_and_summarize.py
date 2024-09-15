@@ -155,6 +155,8 @@ def process_search_and_summarize(query):
 
     logging.debug(f"Summary from Groq: {summary}")
 
+    
+
     # Return the summary, resources, image URL, and Reddit embed
     return summary, resource_list, image_url, reddit_embed
 
