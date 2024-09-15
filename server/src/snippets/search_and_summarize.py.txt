@@ -1,0 +1,10 @@
+First occurrence at line: 94
+URL: https://github.com/Luthiraa/Go-Fish/blob/cc36429e622e1e1f5e481e5a4d826eabad94d75d/server/src/services/search_and_summarize.py
+
+    return None
+
+# Function to send the extracted text to the Groq LLM for summarization
+def summarize_text(text):
+    # Modify the prompt to include the image URL
+    prompt = f"Summarize the following text and provide key takeaways. Make sure to return your answer in Markdown only. Format the bullet points, paragraphs, links, bold, etc., styling with appropriate tags. Make it look super pretty, readable, and well-formatted with spaces. Have extra links at the end too. Here is the text to summarize:\n\n{text}"
+    response = client.chat.completions.create(
