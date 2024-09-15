@@ -112,8 +112,6 @@ def get_reddit_embed(reddit_url):
 
 # New function to find matching products
 def find_matching_products(query):
-
-    return ""
     products_data = fetch_shopify_products()
 
     if 'products' in products_data:
@@ -223,6 +221,7 @@ def process_search_and_summarize(query):
         # summary = f"Found in line: {line_number} \n \n URL: {file_url} \n```python\n{snippet}\n```\n"
     else:
         summary = ""
+        snippet, line_number, file_url = "", "", ""
 
     # Send the combined text and image URL to Groq for summarization
     summary += summarize_text(all_texts)
@@ -234,7 +233,7 @@ def process_search_and_summarize(query):
     logging.debug(f"Matching products: {matching_products}")
 
     # Return the summary, resources, image URL, Reddit embed, GitHub results, and matching products
-    return summary, resource_list, image_url, reddit_embed, github_results, matching_products
+    return summary, resource_list, image_url, reddit_embed,  snippet,line_number, file_url, matching_products
 
 if __name__ == "__main__":
     query = "find me where summarize_text is"
