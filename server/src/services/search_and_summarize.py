@@ -156,7 +156,7 @@ def process_search_and_summarize(query):
         # #! Save the snippet to a text file
         # summary = f"Found in line: {line_number} \n \n URL: {file_url} \n```python\n{snippet}\n```\n"
     else:
-        summary = ""
+        summary = None
 
     # Send the combined text and image URL to Groq for summarization
     summary += summarize_text(all_texts)
