@@ -11,6 +11,9 @@ export default function ResultPage() {
     const [image, setImage] = useState('');
     const [loading, setLoading] = useState(true);
     const query = new URLSearchParams(window.location.search).get('query');
+    const snippet = new URLSearchParams(window.location.search).get('snippet');
+    const line_number = new URLSearchParams(window.location.search).get('line_number');
+    const file_url = new URLSearchParams(window.location.search).get('file_url');
 
     // Handle quick search click
     const handleQuickSearchClick = (searchText) => {
@@ -49,10 +52,10 @@ export default function ResultPage() {
                 } catch (error) {
                     console.error('Error fetching summary:', error);
                 } finally {
-                    setLoading(false);  // End loading state
+                    setLoading(false);
                 }
             } else {
-                setLoading(false);  // If no query, stop loading
+                setLoading(false);  
             }
         };
 

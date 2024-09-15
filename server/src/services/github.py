@@ -103,5 +103,3 @@ if __name__ == "__main__":
         snippet, line_number, file_url = result
         print("Snippet as string:")
         print(snippet)
-        print(f"First occurrence at line: {line_number}")
-        print(f"URL: {file_url}")
