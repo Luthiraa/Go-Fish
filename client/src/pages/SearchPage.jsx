@@ -57,7 +57,8 @@ export default function SearchPage() {
     };
 
     const handleApplyModal = (input) => {
-        setGithubLink(input)
+        const githubUsername = input.split('github.com/')[1] || '';
+        setGithubLink(githubUsername);
         setIsModalOpen(false);
     };
 
