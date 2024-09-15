@@ -95,7 +95,7 @@ def search_github_code(query, repo, token=None):
 if __name__ == "__main__":
     search_query = "find me where summarize_text is"  # The code snippet or term you're searching for
     repository = "Luthiraa/Go-Fish"  # GitHub repository in "owner/repo" format
-    github_token = "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"  # Get GitHub Personal Access Token from environment variable
+    github_token = "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"  # Get GitHub Personal Access Token from environment variable
     
     if not github_token:
         print("GitHub token not found. Please set the GITHUB_TOKEN environment variable.")

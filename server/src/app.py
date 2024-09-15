@@ -21,7 +21,7 @@ def search_and_summarize():
     logging.debug(f"Received query: {query}")
     
     try:
-        summary, resources, image_url, reddit_embed, github_url, github_line_number, github_snippet, matching_products = process_search_and_summarize(query)
+        summary, detailed_summary, resources, image_url, reddit_embed, github_url, github_line_number, github_snippet, matching_products = process_search_and_summarize(query)
         important = extract_important_words(query)
         logging.debug(f"Summary: {summary}")
         logging.debug(f"Important: {important}")
@@ -32,6 +32,7 @@ def search_and_summarize():
         logging.debug(f"File URL: {github_url}")
         return jsonify({
             "summary": summary,
+            "detailed_summary": detailed_summary,
             "resources": resources,
             "important": important,
             "image_url": image_url,
