@@ -39,7 +39,7 @@ def search_github_code(query, repo, token=None):
     keyword = extract_keyword(query)
     if not keyword:
         print("No valid keyword found in the query.")
-        return
+        return None, None, None
     
     # Define the GitHub API search URL
     url = "https://api.github.com/search/code"
@@ -55,8 +55,17 @@ def search_github_code(query, repo, token=None):
     if token:
         headers["Authorization"] = f"token {token}"
     
+    # Print the request details for debugging
+    print(f"Sending request to GitHub API: {url}")
+    print(f"Headers: {headers}")
+    print(f"Params: {params}")
+    
     # Send GET request to GitHub Search API
     response = requests.get(url, headers=headers, params=params)
+    
+    # Print the response status code and headers for debugging
+    print(f"Response status code: {response.status_code}")
+    print(f"Response headers: {response.headers}")
     
     # Check if the request was successful
     if response.status_code == 200:
@@ -79,17 +88,17 @@ def search_github_code(query, repo, token=None):
                 result = [snippet, line_number, file_url]
                 print(f"First occurrence at line: {line_number}")
                 print(f"URL: {file_url}")
-                return result
+                return snippet, line_number, file_url
             else:
                 print(f"No text matches found for '{keyword}' in {file_name}")
-                return []
+                return None, None, None
         else:
             print(f"No results found for '{keyword}' in '{repo}'")
-            return []
+            return None, None, None
     else:
         print(f"Failed to fetch results. Status code: {response.status_code}")
         print(response.json())
-        return []
+        return None, None, None
 
 # Example usage of the function
 if __name__ == "__main__":
@@ -98,8 +107,7 @@ if __name__ == "__main__":
     github_token = "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"  # GitHub Personal Access Token
     
     # Call the search function and get the snippet, line number, and URL as a list
-    result = search_github_code(search_query, repository, github_token)
-    if result:
-        snippet, line_number, file_url = result
+    snippet, line_number, file_url = search_github_code(search_query, repository, github_token)
+    if snippet:
         print("Snippet as string:")
         print(snippet)

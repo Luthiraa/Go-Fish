@@ -23,6 +23,7 @@ def search_and_summarize():
     
     try:
         summary, resources, image_url, reddit_embed, snippet,line_number, file_url, matching_products = process_search_and_summarize(query)
+        # summary, resources, image_url, reddit_embed, github_results, matching_products = process_search_and_summarize(query)
         important = extract_important_words(query)
         logging.debug(f"Summary: {summary}")
         logging.debug(f"Important: {important}")
@@ -31,6 +32,7 @@ def search_and_summarize():
         logging.debug(f"Snippet: {snippet}")
         logging.debug(f"Line Number: {line_number}")
         logging.debug(f"File URL: {file_url}")
+        # logging.debug(f"GH Results: {github_results}")
         return jsonify({
             "summary": summary,
             "resources": resources,
@@ -40,6 +42,7 @@ def search_and_summarize():
             "snippet": snippet,
             "line_number": line_number,
             "file_url": file_url,
+            # "github_results": github_results,
             "matching_products": matching_products
 
 

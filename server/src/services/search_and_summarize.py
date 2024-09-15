@@ -1,11 +1,11 @@
 import requests
 import bs4
 import urllib.parse
-from groq import Groq
+import json
 import logging
+from groq import Groq
 from .github_search import search_github_code  
-from shopify import fetch_shopify_products  # Imported fetch_shopify_products
-import json  # Imported json for parsing
+from .shopify import fetch_shopify_products  # Imported fetch_shopify_products
 
 # Initialize the Groq API client
 api_key = "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"
@@ -36,7 +36,6 @@ def google_search(query, num_results=5):
     
     results = []
     
-
     for g in soup.find_all('div', class_='BNeawe vvjwJb AP7Wnd'):
         title = g.get_text()
         parent_a_tag = g.find_parent('a')
@@ -50,7 +49,7 @@ def google_search(query, num_results=5):
             results.append({"title": title, "link": link, "text": page_text})
             if len(results) >= num_results:
                 break  
-        
+    
     return results
 
 def google_image_search(query):
@@ -211,17 +210,20 @@ def process_search_and_summarize(query):
     # Get image URL
     image_url = google_image_search(query)
     logging.debug(f"Image URL: {image_url}")
-    summary = ""
-    # Call search_github_code and format the summary
-    github_results = search_github_code(query, "Luthiraa/Go-Fish", "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")
-    if github_results:
-        snippet, line_number, file_url = github_results
 
-        # #! Save the snippet to a text file
-        # summary = f"Found in line: {line_number} \n \n URL: {file_url} \n```python\n{snippet}\n```\n"
+    # Initialize summary
+    summary = ""
+    snippet = None
+    line_number = None
+    file_url = None
+
+    # Call search_github_code and format the summary
+    snippet, line_number, file_url = search_github_code(query, "Luthiraa/Go-Fish", "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")
+    if snippet:
+        # Format the URL as a hyperlink and the snippet as a code block
+        summary += f"Found in line: {line_number}\n\nURL: [{file_url}]({file_url})\n\n```python\n{snippet}\n```\n"
     else:
-        summary = ""
-        snippet, line_number, file_url = "", "", ""
+        summary += "No GitHub results found."
 
     # Send the combined text and image URL to Groq for summarization
     summary += summarize_text(all_texts)
@@ -233,11 +235,11 @@ def process_search_and_summarize(query):
     logging.debug(f"Matching products: {matching_products}")
 
     # Return the summary, resources, image URL, Reddit embed, GitHub results, and matching products
-    return summary, resource_list, image_url, reddit_embed,  snippet,line_number, file_url, matching_products
+    return summary, resource_list, image_url, reddit_embed, snippet, line_number, file_url, matching_products
 
 if __name__ == "__main__":
     query = "find me where summarize_text is"
-    summary, resources, image_url, reddit_embed, github_results, matching_products = process_search_and_summarize(query)
+    summary, resources, image_url, reddit_embed, snippet, line_number, file_url, matching_products = process_search_and_summarize(query)
     important = extract_important_words(query)
     print("### Summary from Groq ###")
     print(summary)
