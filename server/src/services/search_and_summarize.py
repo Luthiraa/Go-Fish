@@ -3,6 +3,7 @@ import bs4
 import urllib.parse
 from groq import Groq
 import logging
+from .github_search import search_github_code  # Updated import
 
 # Initialize the Groq API client
 api_key = "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"
@@ -31,28 +32,25 @@ def google_search(query, num_results=5):
     request_result = requests.get(url, headers=headers)
     soup = bs4.BeautifulSoup(request_result.text, "html.parser")
     
-    # Store top results
     results = []
     
-    # Find all result divs
+
     for g in soup.find_all('div', class_='BNeawe vvjwJb AP7Wnd'):
         title = g.get_text()
         parent_a_tag = g.find_parent('a')
         if parent_a_tag and 'href' in parent_a_tag.attrs:
             link = parent_a_tag['href']
             if link.startswith("/url?q="):
-                link = link.split("/url?q=")[1].split("&")[0]  # Extract the actual URL
-                link = urllib.parse.unquote(link)  # Decode the URL
+                link = link.split("/url?q=")[1].split("&")[0]  
+                link = urllib.parse.unquote(link)  
             
-            # Extract page text for the link
             page_text = extract_page_text(link)
             results.append({"title": title, "link": link, "text": page_text})
             if len(results) >= num_results:
-                break  # Limit to top results
+                break  
     
     return results
 
-# Function to search Google Images and get the first image URL
 def google_image_search(query):
     url = 'https://www.google.com/search?q=' + urllib.parse.quote(query) + '&tbm=isch'
     headers = {
@@ -150,26 +148,27 @@ def process_search_and_summarize(query):
     image_url = google_image_search(query)
     logging.debug(f"Image URL: {image_url}")
 
+    # Call search_github_code and format the summary
+    github_results = search_github_code(query, "Luthiraa/Go-Fish", "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")
+    if github_results:
+        snippet, line_number, file_url = github_results
+
+        # #! Save the snippet to a text file
+        # summary = f"Found in line: {line_number} \n \n URL: {file_url} \n```python\n{snippet}\n```\n"
+    else:
+        summary = "No GitHub results found."
+
     # Send the combined text and image URL to Groq for summarization
-    summary = summarize_text(all_texts)
+    summary += summarize_text(all_texts)
 
     logging.debug(f"Summary from Groq: {summary}")
 
-    
-
     # Return the summary, resources, image URL, and Reddit embed
-    return summary, resource_list, image_url, reddit_embed
+    return summary, resource_list, image_url, reddit_embed, github_results
 
 if __name__ == "__main__":
-    query = "What is go fish hack the north?"
+    query = "find me where summarize_text is"
     summary, resources, image_url, reddit_embed = process_search_and_summarize(query)
     important = extract_important_words(query)
-    print("### Important Words ###")
-    print(important)
     print("### Summary from Groq ###")
     print(summary)
-    print("\n### Resources Used ###")
-    for link in resources:
-        print(link)
-    print("\n### Reddit Embed ###")
-    print(reddit_embed)
