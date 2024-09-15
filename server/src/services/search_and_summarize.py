@@ -4,9 +4,11 @@ import urllib.parse
 from groq import Groq
 import logging
 from .github_search import search_github_code  
+from shopify import fetch_shopify_products  # Imported fetch_shopify_products
+import json  # Imported json for parsing
 
 # Initialize the Groq API client
-api_key = "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"
+api_key = "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"
 client = Groq(api_key=api_key)
 
 # Function to extract the text from a webpage
@@ -48,7 +50,7 @@ def google_search(query, num_results=5):
             results.append({"title": title, "link": link, "text": page_text})
             if len(results) >= num_results:
                 break  
-    
+        
     return results
 
 def google_image_search(query):
@@ -108,6 +110,70 @@ def get_reddit_embed(reddit_url):
         print(f"Error fetching Reddit oEmbed: {str(e)}")
         return None
 
+# New function to find matching products
+def find_matching_products(query):
+
+    return ""
+    products_data = fetch_shopify_products()
+
+    if 'products' in products_data:
+        products = products_data['products']
+    else:
+        logging.error(f"Error fetching products: {products_data.get('message', 'Unknown error')}")
+        return []
+
+    # Extract necessary fields from products
+    products_list = []
+
+    for product in products:
+        title = product.get('title', '')
+        price = product.get('variants', [{}])[0].get('price', '')
+        image_url = ''
+        if product.get('image'):
+            image_url = product['image'].get('src', '')
+        products_list.append({
+            'title': title,
+            'Price': price,
+            'AbsoluteImageURL': image_url
+        })
+
+    # Prepare the prompt
+    prompt = f"""I have the following products in my shopify store:
+
+{products_list}
+
+Find any products that are similar to the following query: "{query}".
+
+Return the matching products as a JSON list of objects, where each object has the keys "title", "Price", "AbsoluteImageURL".
+
+If there are no matching products, return an empty list.
+
+Here is an example of the desired output:
+
+[{{"title": "Blue fish",
+"Price": "0.87",
+"AbsoluteImageURL": "https://cdn.shopify.com/s/files/1/0674/2363/3586/files/1930365526_e36f10b40e_c.jpg?v=1726367899"}}]
+"""
+
+    response = client.chat.completions.create(
+        model="llama3-8b-8192",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": prompt}
+        ],
+        max_tokens=500
+    )
+
+    matching_products_str = response.choices[0].message.content.strip()
+
+    try:
+        matching_products = json.loads(matching_products_str)
+    except json.JSONDecodeError as e:
+        logging.error(f"Error decoding JSON: {str(e)}")
+        matching_products = []
+
+    return matching_products
+
 # Main function to fetch top 5 results, process them, and send to Groq
 def process_search_and_summarize(query):
     logging.basicConfig(level=logging.DEBUG)
@@ -156,19 +222,25 @@ def process_search_and_summarize(query):
         # #! Save the snippet to a text file
         # summary = f"Found in line: {line_number} \n \n URL: {file_url} \n```python\n{snippet}\n```\n"
     else:
-        summary = None
+        summary = ""
 
     # Send the combined text and image URL to Groq for summarization
     summary += summarize_text(all_texts)
 
     logging.debug(f"Summary from Groq: {summary}")
 
-    # Return the summary, resources, image URL, and Reddit embed
-    return summary, resource_list, image_url, reddit_embed, github_results
+    # Find matching products
+    matching_products = find_matching_products(query)
+    logging.debug(f"Matching products: {matching_products}")
+
+    # Return the summary, resources, image URL, Reddit embed, GitHub results, and matching products
+    return summary, resource_list, image_url, reddit_embed, github_results, matching_products
 
 if __name__ == "__main__":
     query = "find me where summarize_text is"
-    summary, resources, image_url, reddit_embed = process_search_and_summarize(query)
+    summary, resources, image_url, reddit_embed, github_results, matching_products = process_search_and_summarize(query)
     important = extract_important_words(query)
     print("### Summary from Groq ###")
     print(summary)
+    print("### Matching Products ###")
+    print(matching_products)
