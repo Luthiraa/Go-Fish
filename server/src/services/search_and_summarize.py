@@ -25,14 +25,17 @@ def extract_page_text(page_url):
 # Function to get top 5 Google search results
 def google_search(query, num_results=5):
     url = 'https://google.com/search?q=' + urllib.parse.quote(query)
-    request_result = requests.get(url)
+    headers = {
+        "User-Agent": "Mozilla/5.0"
+    }
+    request_result = requests.get(url, headers=headers)
     soup = bs4.BeautifulSoup(request_result.text, "html.parser")
     
     # Store top results
     results = []
     
-    # Find all result divs, limit to top 5
-    for g in soup.find_all('div', class_='BNeawe vvjwJb AP7Wnd')[:num_results]:
+    # Find all result divs
+    for g in soup.find_all('div', class_='BNeawe vvjwJb AP7Wnd'):
         title = g.get_text()
         parent_a_tag = g.find_parent('a')
         if parent_a_tag and 'href' in parent_a_tag.attrs:
@@ -44,6 +47,8 @@ def google_search(query, num_results=5):
             # Extract page text for the link
             page_text = extract_page_text(link)
             results.append({"title": title, "link": link, "text": page_text})
+            if len(results) >= num_results:
+                break  # Limit to top results
     
     return results
 
@@ -93,6 +98,18 @@ def extract_important_words(query):
 
     return important_words
 
+# Function to get Reddit embed response
+def get_reddit_embed(reddit_url):
+    oembed_url = 'https://www.reddit.com/oembed'
+    params = {'url': reddit_url}
+    try:
+        response = requests.get(oembed_url, params=params)
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        print(f"Error fetching Reddit oEmbed: {str(e)}")
+        return None
+
 # Main function to fetch top 5 results, process them, and send to Groq
 def process_search_and_summarize(query):
     logging.basicConfig(level=logging.DEBUG)
@@ -104,7 +121,8 @@ def process_search_and_summarize(query):
     search_results = google_search(query)
     all_texts = ""
     resource_list = []
-
+    reddit_links = []
+    
     # Combine all the text from the top 5 results
     for result in search_results:
         title = result['title']
@@ -112,8 +130,21 @@ def process_search_and_summarize(query):
         text = result['text']
         all_texts += f"\n\nFrom {title} ({link}):\n{text[:1000]}"  # Limit text from each source
         resource_list.append(link)
-
+        
+        # Check if link is from Reddit
+        if 'reddit.com' in link:
+            reddit_links.append(link)
+    
     logging.debug(f"Combined text: {all_texts[:500]}...")  # Print first 500 characters for brevity
+
+    # Get Reddit embed response
+    reddit_embed = None
+    if reddit_links:
+        reddit_link = reddit_links[0]  # Use the first Reddit link
+        reddit_embed = get_reddit_embed(reddit_link)
+        logging.debug(f"Reddit embed response: {reddit_embed}")
+    else:
+        logging.debug("No Reddit link found in search results.")
 
     # Get image URL
     image_url = google_image_search(query)
@@ -124,13 +155,12 @@ def process_search_and_summarize(query):
 
     logging.debug(f"Summary from Groq: {summary}")
 
-    # Return the summary and the resources
-    return summary, resource_list, image_url
-
+    # Return the summary, resources, image URL, and Reddit embed
+    return summary, resource_list, image_url, reddit_embed
 
 if __name__ == "__main__":
     query = "What is go fish hack the north?"
-    summary, resources = process_search_and_summarize(query)
+    summary, resources, image_url, reddit_embed = process_search_and_summarize(query)
     important = extract_important_words(query)
     print("### Important Words ###")
     print(important)
@@ -139,3 +169,5 @@ if __name__ == "__main__":
     print("\n### Resources Used ###")
     for link in resources:
         print(link)
+    print("\n### Reddit Embed ###")
+    print(reddit_embed)
