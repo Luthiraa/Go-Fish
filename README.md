@@ -1,4 +1,4 @@
-# Welcome to Go Fish 🐟: Information in Reel 🎣 Time
+# [Welcome to Go Fish 🐟: Information in Reel 🎣 Time](https://www.youtube.com/watch?v=FhyibhNDcYc)
 
 ## Motivation
 
@@ -47,6 +47,7 @@ Go Fish can be modified and applied to individual systems, e.g. for employees to
 Go Fish is compatible with air-gapped (internet-less) practices of holding several recent searches in a queue, depending on data storage and retrieval needs, as well as required system size.
 
 ## Other useful links
+- [Demo](https://www.youtube.com/watch?v=FhyibhNDcYc)
 - [Github](https://github.com/Luthiraa/Go-Fish)
 - [GoFish.wiki](http://gofish.wiki/)
 - [Presentaion](https://docs.google.com/presentation/d/1L-ce0wTBOxdkm2LJwvT0z2leot5CT0BwwbkEzPCmRYg/edit#slide=id.p)
